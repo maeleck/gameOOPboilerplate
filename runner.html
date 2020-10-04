@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<p id="demo"></p>
+<div id="box" style="position: relative; top: 10px; left: 10px; height: 50px; width: 50px; background-color: red;"></div>
+
+<div id="fpsDisplay" style="position: relative; top: 70px; left: 10px;"></div>
+
+<script>
+// Constructor function for Person objects
+function Person(first, last, age, eye) {
+  this.firstName = first;
+  this.lastName = last;
+  this.age = age;
+  this.eyeColor = eye;
+  this.changeName = function (name) {
+    this.lastName = name;
+  }
+}
+
+// Create a Person object
+var  myFather = new Person("John", "Doe", 50, "blue");
+myFather.changeName("Doe");
+
+// Display age
+document.getElementById("demo").innerHTML =
+"My father is " + myFather.age + ".";
+</script>
+
+<canvas id="myCanvas" width="700" height="500" style="border:1px solid #d3d3d3;">
+Your browser does not support the HTML canvas tag.</canvas>
+
+<script>
+
+var c = document.getElementById("myCanvas");
+var ctx = c.getContext("2d");
+
+function Runner(xR, yR) {
+  this.xR = xR;
+  this.yR = yR;
+
+  this.bounce = function (yyR) {
+ //   ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+ 
+    ctx.fillRect(xR, yyR, 50, 50);
+   
+ 
+  }
+  this.move = function () {
+ 
+    xR++;
+   
+    ctx.fillRect(xR, this.yyR, 50, 50);
+   
+ 
+  }
+ 
+ 
+  this.clear = function () {
+ 
+    ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+   
+ 
+  }
+}
+
+var runner = new Runner(95,250);
+var runner1 = new Runner(195,250);
+
+//document.getElementById("demo").innerHTML = runner.yR
+
+////////////////////////////////////
+
+var box = document.getElementById('box'),
+    fpsDisplay = document.getElementById('fpsDisplay'),
+    boxPos = 10,
+    boxVelocity = 0.08,
+    limit = 300,
+    lastFrameTimeMs = 0,
+    maxFPS = 60,
+    delta = 0,
+    timestep = 1000 / 60,
+    fps = 60,
+    framesThisSecond = 0,
+    lastFpsUpdate = 0;
+
+function update(delta) {
+    boxPos += boxVelocity * delta;
+    // Switch directions if we go too far
+    if (boxPos >= limit || boxPos <= 0) boxVelocity = -boxVelocity;
+
+}
+
+function draw() {
+    box.style.left = boxPos + 'px';
+    fpsDisplay.textContent = Math.round(fps) + ' FPS';
+   
+    runner.clear()
+    runner.bounce(100)
+    runner.move()
+
+
+    runner1.bounce(300)
+  runner1.move()
+   
+document.getElementById("demo").innerHTML = runner1.xR
+}
+
+function panic() {
+    delta = 0;
+}
+
+function mainLoop(timestamp) {
+    // Throttle the frame rate.    
+    if (timestamp < lastFrameTimeMs + (1000 / maxFPS)) {
+        requestAnimationFrame(mainLoop);
+        return;
+    }
+    delta += timestamp - lastFrameTimeMs;
+    lastFrameTimeMs = timestamp;
+
+    if (timestamp > lastFpsUpdate + 1000) {
+        fps = 0.25 * framesThisSecond + 0.75 * fps;
+
+        lastFpsUpdate = timestamp;
+        framesThisSecond = 0;
+    }
+    framesThisSecond++;
+
+    var numUpdateSteps = 0;
+    while (delta >= timestep) {
+        update(timestep);
+        delta -= timestep;
+        if (++numUpdateSteps >= 240) {
+            panic();
+            break;
+        }
+    }
+    draw();
+    requestAnimationFrame(mainLoop);
+}
+
+requestAnimationFrame(mainLoop);
+</script>
+
+
+</body>
+</html>
